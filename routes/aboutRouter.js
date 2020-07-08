@@ -15,7 +15,7 @@ aboutRouter.use(bodyParser.json());
     })
     .put((req, res) => {
         res.statusCode = 403;
-        res.end('PUT operation not supported on /abouts');
+        res.end('PUT operation not supported on /about');
     })
 
 module.exports = aboutRouter;

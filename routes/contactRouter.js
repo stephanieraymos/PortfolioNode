@@ -15,7 +15,7 @@ contactRouter.use(bodyParser.json());
     })
     .put((req, res) => {
         res.statusCode = 403;
-        res.end('PUT operation not supported on /contacts');
+        res.end('PUT operation not supported on /contact');
     })
 
 module.exports = contactRouter;
