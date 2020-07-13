@@ -12,7 +12,7 @@ const jobSchema = new Schema({
   },
   duties: {
     type: Array,
-    required: true,
+    required: false,
     maxItems: 10,
     items: {
       type: String

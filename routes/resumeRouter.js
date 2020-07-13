@@ -43,14 +43,14 @@ resumeRouter.route('/')
 
 resumeRouter.route('/:resume/job')
 .get((req, res, next) => {
-    Resume.findById(req.params.resumeId)//client is looking for a single resume's job; not all
+    Resume.find(req.params.resume)
     .then(resume => {
         if (resume) { //making sure non-null/truthy value was returned for the resume document
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
             res.json(resume.job); //accessing and returning the comments for this resume formatted in json
         } else {
-            err = new Error(`Resume ${req.params.resumeId} not found`); 
+            err = new Error(`Resume ${req.params.resume} not found`); 
             err.status = 404;
             return next(err); //Passing off error to express error handling mechanism 
         }
@@ -58,7 +58,7 @@ resumeRouter.route('/:resume/job')
     .catch(err => next(err));
 })
 .post((req, res, next) => { //This post request will be adding a new comment to the list of comments for a particular resume
-    Resume.findById(req.params.resumeId)
+    Resume.find(req.params.resume)
     .then(resume => {
         if (resume) { //making sure non-null/truthy value was returned for the resume document
             resume.job.push(req.body); //pushing new job into the job array
@@ -71,7 +71,7 @@ resumeRouter.route('/:resume/job')
             })
             .catch(err => next(err));
         } else {
-            err = new Error(`Resume ${req.params.resumeId} not found`);
+            err = new Error(`Resume ${req.params.resume} not found`);
             err.status = 404;
             return next(err);
         }
@@ -80,10 +80,10 @@ resumeRouter.route('/:resume/job')
 })
 .put((req, res) => {
     res.statusCode = 403;
-    res.end(`PUT operation not supported on /resume/${req.params.resumeId}/job`); //echoing back to the client: the path that they tried to reach
+    res.end(`PUT operation not supported on /resume/${req.params.resume}/job`); //echoing back to the client: the path that they tried to reach
 })
 .delete((req, res, next) => {
-    Resume.findById(req.params.resumeId)
+    Resume.find(req.params.resume)
     .then(resume => {
         if (resume) { //making sure non-null/truthy value was returned for the resume document
             for (let i = (resume.job.length-1); i >= 0; i--) { //Looping through and removing every job one at a time by its id
@@ -97,7 +97,7 @@ resumeRouter.route('/:resume/job')
             })
             .catch(err => next(err));
         } else {
-            err = new Error(`Resume ${req.params.resumeId} not found`);
+            err = new Error(`Resume ${req.params.resume} not found`);
             err.status = 404;
             return next(err);
         }
@@ -105,16 +105,16 @@ resumeRouter.route('/:resume/job')
     .catch(err => next(err));
 });
 
-resumeRouter.route('/:resumeId/job/:jobId')
+resumeRouter.route('/:resume/job/:jobId')
 .get((req, res, next) => {
-    Resume.findById(req.params.resumeId)
+    Resume.find(req.params.resume)
     .then(resume => {
         if (resume && resume.job.id(req.params.jobId)) { //making sure non-null/truthy value was returned for the resume document & for the job
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
             res.json(resume.job.id(req.params.jobId));
         } else if (!resume) { //if resume was not found
-            err = new Error(`Resume ${req.params.resumeId} not found`);
+            err = new Error(`Resume ${req.params.resume} not found`);
             err.status = 404;
             return next(err);
         } else { //if comment was not found
@@ -127,19 +127,19 @@ resumeRouter.route('/:resumeId/job/:jobId')
 })
 .post((req, res) => {
     res.statusCode = 403;
-    res.end(`POST operation not supported on /resume/${req.params.resumeId}/job/${req.params.jobId}`);
+    res.end(`POST operation not supported on /resume/${req.params.resume}/job/${req.params.jobId}`);
 })
 .put((req, res, next) => { //this put request will update the text and rating fields of an existing comment
-    Resume.findById(req.params.resumeId)
+    Resume.findById(req.params.resume)
     .then(resume => {
         if (resume && resume.job.id(req.params.jobId)) { //making sure non-null/truthy value was returned for the resume document & for the job
             if (req.body.yearsEmp) { //if a new job yearsEmp has been passed in
-                campsite.job.id(req.params.jobId).yearsEmp = req.body.yearsEmp; //then we'll set the yearsEmp for the specified job with that new yearsEmp
+                resume.job.id(req.params.jobId).yearsEmp = req.body.yearsEmp; //then we'll set the yearsEmp for the specified job with that new yearsEmp
             }
             if (req.body.title) { //if a new job title has been passed in
                 resume.job.id(req.params.jobId).title = req.body.title; //then we'll set the title for the specified job with that new title
             }
-            campsite.save() //save updates to mongodb server
+            resume.save() //save updates to mongodb server
             .then(resume => { //if save operation succeeds
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
@@ -147,7 +147,7 @@ resumeRouter.route('/:resumeId/job/:jobId')
             })
             .catch(err => next(err));
         } else if (!resume) {
-            err = new Error(`Resume ${req.params.resumeId} not found`);
+            err = new Error(`Resume ${req.params.resume} not found`);
             err.status = 404;
             return next(err);
         } else {
@@ -159,7 +159,7 @@ resumeRouter.route('/:resumeId/job/:jobId')
     .catch(err => next(err));
 })
 .delete((req, res, next) => {
-    Resume.findById(req.params.resumeId)
+    Resume.find(req.params.resume)
     .then(resume => {
         if (resume && resume.job.id(req.params.jobId)) {
             resume.job.id(req.params.jobId).remove(); //removing job
@@ -171,7 +171,7 @@ resumeRouter.route('/:resumeId/job/:jobId')
             })
             .catch(err => next(err));
         } else if (!resume) {
-            err = new Error(`Resume ${req.params.resumeId} not found`);
+            err = new Error(`Resume ${req.params.resume} not found`);
             err.status = 404;
             return next(err);
         } else {
