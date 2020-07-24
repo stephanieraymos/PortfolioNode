@@ -4,13 +4,60 @@ const Schema = mongoose.Schema;
 
 const jobSchema = new Schema({
   //FIRST ARGUMENT:
-  phone: {
+  // phone: {
+  //   type: Number,
+  //   min: 10, //min value
+  //   max: 11, //max value
+  //   required: true
+  // },
+  // duties: {
+  //   type: Array,
+  //   required: false,
+  //   maxItems: 10,
+  //   items: {
+  //     type: String
+  //   }
+  // },
+  // address: {
+  //   type: String,
+  //   required: true
+  // },
+  yearsEmp: {
     type: Number,
-    min: 10, //min value
-    max: 11, //max value
+    min: 0,
+    max: 10,
     required: true
   },
-  duties: {
+  company: {
+    type: String,
+    required: true
+  },
+  title: {
+    type: String,
+    required: true
+  }
+
+}, {
+  //SECOND ARGUMENT:
+  timestamps: true
+});
+
+//Creating Schema:
+const resumeSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+    unique: false,
+  },
+  description: {
+    type: String,
+    required: false,
+  },
+  image: {
+    type: String,
+    required: false,
+  },
+  skills: {
     type: Array,
     required: false,
     maxItems: 10,
@@ -18,57 +65,14 @@ const jobSchema = new Schema({
       type: String
     }
   },
-  address: {
-    type: String,
-    required: true
-  },
-  yearsEmp: {
-    type: Number,
-    min: 0,
-    max: 10,
-    required: true
-  },
-  title: {
-    type: String,
-    required: true
-  }
-  
-}, {
-    //SECOND ARGUMENT:
-    timestamps: true
-});
-
-//Creating Schema:
-const resumeSchema = new Schema({
-  name: {
-      type: String,
-      required: true,
-      unique: true
-  },
-  description: {
-      type: String,
-      required: true
-  },
-  image: {
-      type: String,
-      required: true
-  },
-  skills: {
-    type: Array,
-    required: true,
-    maxItems: 10,
-    items: {
-      type: String
-    }
-  },
   certificates: {
-      type: String,
-      required: false,
-      min: 0
+    type: String,
+    required: false,
+    min: 0
   },
   education: {
-      type: String,
-      default: false
+    type: String,
+    default: false
   },
   job: [jobSchema]
 }, {
